@@ -1,4 +1,4 @@
-
+[Uploading index(2).html…]()
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -289,8 +289,16 @@ document.getElementById('next').onclick=async()=>{
     document.getElementById('answers').innerHTML='';
     document.getElementById('feedback').textContent=saveResult.ok?'Your score was saved to the global ranking.':(saveResult.local?'Your score was saved only on this device.':('Score could not be synced: '+(saveResult.error||'unknown error')));
     completed=true;
-    document.getElementById('next').textContent='Try again';
     await loadRanking();
+    if(active < quizzes.length - 1){
+      document.getElementById('next').textContent='Loading next block…';
+      document.getElementById('feedback').textContent += ' Next block starts automatically…';
+      setTimeout(()=>start(active+1),1800);
+    } else {
+      document.getElementById('question').textContent=`All challenges complete! Final block: ${score} out of ${q.qs.length} correct.`;
+      document.getElementById('next').textContent='Back to quizzes';
+      document.getElementById('next').onclick=()=>{completed=false;document.getElementById('quiz').classList.remove('active');goQuizzes()};
+    }
   }
 };
 

@@ -1,4 +1,4 @@
-[Uploading index(1).html…]()
+[Uploading index_ranking_acumulado(1).html…]()
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -194,7 +194,7 @@ async function loadRanking(){
   if(!supabaseClient){status.textContent='Modo local: configure o Supabase para compartilhar o ranking.';renderRankingLocal();return}
   status.textContent='Carregando ranking global...';
   try {
-    const {data,error}=await supabaseClient.from('scores').select('name,score,total,created_at').order('score',{ascending:false}).limit(50);
+    const {data,error}=await supabaseClient.from('scores').select('name,score,total,quizTitle,created_at').order('score',{ascending:false}).limit(50);
     if(error){
       console.error('Erro ao carregar ranking:',error);
       status.textContent='Erro no ranking global: '+error.message;
@@ -207,17 +207,34 @@ async function loadRanking(){
     status.textContent='Não foi possível conectar ao ranking global.';
   }
 }
-function renderRankingData(s){
+function renderRankingData(rows){
   const box=document.getElementById("rankingRows");box.innerHTML='';
-  if(!s.length){box.innerHTML='<div class="rank-row"><div>—</div><div>Nenhum jogador ainda</div><div>—</div></div>';return}
-  s.slice(0,20).forEach((p,i)=>{
+  // Count each quiz block once per player, keeping the best result for that block.
+  const players=new Map();
+  rows.forEach(p=>{
+    const name=String(p.name||'').trim();
+    if(!name)return;
+    const quiz=String(p.quizTitle||p.quiz||'Quiz');
+    if(!players.has(name))players.set(name,{name,blocks:new Map(),score:0,total:0});
+    const player=players.get(name);
+    const old=player.blocks.get(quiz);
+    const points=Number(p.score)||0;
+    const total=Number(p.total)||0;
+    if(!old || points>old.score) player.blocks.set(quiz,{score:points,total});
+  });
+  const ranking=[...players.values()].map(p=>{
+    p.blocks.forEach(b=>{p.score+=b.score;p.total+=b.total});
+    return p;
+  }).sort((a,b)=>b.score-a.score || b.total-a.total || a.name.localeCompare(b.name));
+  if(!ranking.length){box.innerHTML='<div class="rank-row"><div>—</div><div>Nenhum jogador ainda</div><div>—</div></div>';return}
+  ranking.slice(0,20).forEach((p,i)=>{
     const r=document.createElement("div");r.className="rank-row";
     r.innerHTML=`<div class="rank-number">${i+1}</div><div>${escapeHtml(p.name)}</div><div>${p.score}/${p.total}</div>`;
     box.appendChild(r);
   });
 }
 function renderRankingLocal(){
-  let s=JSON.parse(localStorage.getItem("avilaScores")||"[]").sort((a,b)=>b.score-a.score);
+  const s=JSON.parse(localStorage.getItem("avilaScores")||"[]");
   renderRankingData(s);
 }
 function escapeHtml(v){return String(v).replace(/[&<>\'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}

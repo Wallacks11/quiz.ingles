@@ -1,4 +1,4 @@
-[Uploading index_ranking_acumulado(1).html…]()
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>

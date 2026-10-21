@@ -1,4 +1,4 @@
-[index.html](https://github.com/user-attachments/files/33793344/index.html)
+[Uploading index(1).html…]()
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -150,7 +150,7 @@ quizzes.forEach((q,i)=>{
   cards.appendChild(a);
 });
 
-let active=0,step=0,score=0,chosen=null,answered=false;
+let active=0,step=0,score=0,chosen=null,answered=false,completed=false;
 
 function user(){return JSON.parse(localStorage.getItem("avilaUser")||"null")}
 function openAuth(){document.getElementById("auth").classList.add("active");document.getElementById("authMsg").textContent=""}
@@ -224,7 +224,7 @@ function escapeHtml(v){return String(v).replace(/[&<>\'"]/g,c=>({'&':'&amp;','<'
 
 function start(i){
   if(!user()){openAuth();return}
-  active=i;step=0;score=0;chosen=null;answered=false;
+  active=i;step=0;score=0;chosen=null;answered=false;completed=false;
   const q=quizzes[i];
   document.getElementById('quiz').classList.add('active');
   document.getElementById('quiz-title').textContent=q.title;
@@ -251,6 +251,7 @@ function show(){
 }
 
 document.getElementById('next').onclick=async()=>{
+  if(completed){start(active);return}
   const q=quizzes[active],item=q.qs[step];
   if(!answered){
     if(chosen===null){document.getElementById('feedback').textContent='Choose an option to continue.';return}
@@ -270,8 +271,8 @@ document.getElementById('next').onclick=async()=>{
     document.getElementById('question').textContent=`Challenge complete! You got ${score} out of ${q.qs.length} correct.`;
     document.getElementById('answers').innerHTML='';
     document.getElementById('feedback').textContent=saveResult.ok?'Your score was saved to the global ranking.':(saveResult.local?'Your score was saved only on this device.':('Score could not be synced: '+(saveResult.error||'unknown error')));
+    completed=true;
     document.getElementById('next').textContent='Try again';
-    document.getElementById('next').onclick=()=>start(active);
     await loadRanking();
   }
 };

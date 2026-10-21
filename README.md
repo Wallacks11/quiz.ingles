@@ -1,4 +1,4 @@
-[index.html](https://github.com/user-attachments/files/33792716/index_A_VILA_FEITO_DE_NOVO.html)
+[index.html](https://github.com/user-attachments/files/33793344/index.html)
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -74,6 +74,7 @@ main{max-width:1200px;margin:auto;padding:25px 24px 80px}.section-head{display:f
     <div class="section-head">
       <h2>Ranking da Vila</h2>
       <p>Veja quem já completou os desafios e suas melhores pontuações.</p>
+      <p id="rankingStatus" role="status" style="font-size:12px;color:var(--muted)">Conectando ao placar...</p>
     </div>
     <div class="ranking-box">
       <div class="rank-row head"><div>#</div><div>Jogador</div><div>Pontos</div></div>
@@ -99,7 +100,13 @@ main{max-width:1200px;margin:auto;padding:25px 24px 80px}.section-head{display:f
 
 <footer class="footer">A VILA · QUIZZES DE FÃS · EXPERIÊNCIA NÃO OFICIAL</footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL = "https://hvsanmqtrfkabknkutof.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_oSax2b4gHTNRKMWI9xYRLA_gwsz213_";
+const supabaseReady = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY && !SUPABASE_URL.includes("COLE_AQUI") && !SUPABASE_ANON_KEY.includes("COLE_AQUI") && window.supabase && typeof window.supabase.createClient === 'function');
+const supabaseClient = supabaseReady ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
 const quizzes=[
 {title:"Você realmente entendeu A Vila?",desc:"Acontecimentos e personagens",tag:"Conhecimento",img:"data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20600%22%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%22900%22%20height%3D%22600%22%20fill%3D%22%2317231d%22%2F%3E%0A%20%20%20%20%20%20%0A%20%20%20%20%20%20%3Cpath%20d%3D%22M0%20310%20L150%20170%20L270%20300%20L410%20125%20L570%20305%20L720%20155%20L900%20315%20V600%20H0Z%22%20fill%3D%22%23667451%22%20opacity%3D%22.75%22%2F%3E%0A%20%20%20%20%20%20%3Cpath%20d%3D%22M0%20385%20Q180%20290%20350%20390%20T700%20375%20T900%20390%20V600%20H0Z%22%20fill%3D%22%23243326%22%2F%3E%0A%20%20%20%20%20%20%3Cpath%20d%3D%22M0%20475%20Q180%20390%20360%20475%20T720%20460%20T900%20480%20V600%20H0Z%22%20fill%3D%22%23101810%22%2F%3E%0A%20%20%20%20%20%20%3Cpath%20d%3D%22M425%20600%20Q455%20515%20445%20455%20Q438%20410%20410%20365%20Q475%20410%20510%20470%20Q535%20520%20550%20600Z%22%20fill%3D%22%23695c43%22%20opacity%3D%22.8%22%2F%3E%0A%20%20%20%20%20%20%3Cg%20fill%3D%22%230b120c%22%3E%0A%20%20%20%20%20%20%20%20%3Cpath%20d%3D%22M75%20600%20V330%20L25%20430%20H55%20L10%20500%20H52%20L0%20575%20H75Z%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Cpath%20d%3D%22M180%20600%20V280%20L125%20400%20H155%20L105%20480%20H145%20L95%20555%20H180Z%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Cpath%20d%3D%22M790%20600%20V290%20L735%20405%20H765%20L715%20485%20H755%20L705%20560%20H790Z%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Cpath%20d%3D%22M865%20600%20V320%20L820%20420%20H845%20L800%20500%20H835%20L790%20570%20H865Z%22%2F%3E%0A%20%20%20%20%20%20%3C%2Fg%3E%0A%20%20%20%20%20%20%3Cg%20fill%3D%22%2331442f%22%20opacity%3D%22.9%22%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22120%22%20cy%3D%22380%22%20r%3D%2255%22%2F%3E%3Ccircle%20cx%3D%22235%22%20cy%3D%22350%22%20r%3D%2270%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Ccircle%20cx%3D%22670%22%20cy%3D%22365%22%20r%3D%2265%22%2F%3E%3Ccircle%20cx%3D%22775%22%20cy%3D%22390%22%20r%3D%2255%22%2F%3E%0A%20%20%20%20%20%20%3C%2Fg%3E%0A%20%20%20%20%20%20%3Crect%20y%3D%22555%22%20width%3D%22900%22%20height%3D%2245%22%20fill%3D%22%230a100b%22%2F%3E%0A%20%20%20%20%3C%2Fsvg%3E",qs:[
 ["What kind of place does the community live in?",["An isolated village","A large city","A tourist island","Underground"],0],
@@ -160,6 +167,61 @@ function play(){user()?goQuizzes():openAuth()}
 function goQuizzes(){document.getElementById("quizzes").scrollIntoView({behavior:"smooth"})}
 function goRanking(){document.getElementById("ranking").scrollIntoView({behavior:"smooth"})}
 
+async function saveScoreRealtime(playerName, points, total, quizTitle){
+  if(!supabaseClient){
+    const scores=JSON.parse(localStorage.getItem("avilaScores")||"[]");
+    scores.push({name:playerName,score:points,total,quiz:quizTitle});
+    localStorage.setItem("avilaScores",JSON.stringify(scores));
+    renderRankingLocal();
+    return {ok:false,local:true,error:"Supabase não configurado"};
+  }
+  try {
+    const {error}=await supabaseClient.from('scores').insert({name:playerName,score:points,total:total,quizTitle:quizTitle});
+    if(error){
+      console.error('Erro ao salvar pontuação no Supabase:',error);
+      document.getElementById('rankingStatus').textContent='Erro ao salvar pontuação: '+error.message;
+      return {ok:false,error:error.message};
+    }
+    return {ok:true};
+  } catch(err) {
+    console.error(err);
+    document.getElementById('rankingStatus').textContent='Falha de conexão com o Supabase.';
+    return {ok:false,error:String(err)};
+  }
+}
+async function loadRanking(){
+  const status=document.getElementById('rankingStatus');
+  if(!supabaseClient){status.textContent='Modo local: configure o Supabase para compartilhar o ranking.';renderRankingLocal();return}
+  status.textContent='Carregando ranking global...';
+  try {
+    const {data,error}=await supabaseClient.from('scores').select('name,score,total,created_at').order('score',{ascending:false}).limit(50);
+    if(error){
+      console.error('Erro ao carregar ranking:',error);
+      status.textContent='Erro no ranking global: '+error.message;
+      return;
+    }
+    renderRankingData(data||[]);
+    status.textContent='Ranking global conectado · atualiza em tempo real';
+  } catch(err) {
+    console.error(err);
+    status.textContent='Não foi possível conectar ao ranking global.';
+  }
+}
+function renderRankingData(s){
+  const box=document.getElementById("rankingRows");box.innerHTML='';
+  if(!s.length){box.innerHTML='<div class="rank-row"><div>—</div><div>Nenhum jogador ainda</div><div>—</div></div>';return}
+  s.slice(0,20).forEach((p,i)=>{
+    const r=document.createElement("div");r.className="rank-row";
+    r.innerHTML=`<div class="rank-number">${i+1}</div><div>${escapeHtml(p.name)}</div><div>${p.score}/${p.total}</div>`;
+    box.appendChild(r);
+  });
+}
+function renderRankingLocal(){
+  let s=JSON.parse(localStorage.getItem("avilaScores")||"[]").sort((a,b)=>b.score-a.score);
+  renderRankingData(s);
+}
+function escapeHtml(v){return String(v).replace(/[&<>\'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+
 function start(i){
   if(!user()){openAuth();return}
   active=i;step=0;score=0;chosen=null;answered=false;
@@ -188,7 +250,7 @@ function show(){
   });
 }
 
-document.getElementById('next').onclick=()=>{
+document.getElementById('next').onclick=async()=>{
   const q=quizzes[active],item=q.qs[step];
   if(!answered){
     if(chosen===null){document.getElementById('feedback').textContent='Choose an option to continue.';return}
@@ -204,32 +266,27 @@ document.getElementById('next').onclick=()=>{
   if(step<q.qs.length-1){step++;show()}
   else{
     const u=user();
-    const scores=JSON.parse(localStorage.getItem("avilaScores")||"[]");
-    scores.push({name:u.name,score:score,total:q.qs.length,quiz:q.title});
-    localStorage.setItem("avilaScores",JSON.stringify(scores));
+    const saveResult=await saveScoreRealtime(u.name,score,q.qs.length,q.title);
     document.getElementById('question').textContent=`Challenge complete! You got ${score} out of ${q.qs.length} correct.`;
     document.getElementById('answers').innerHTML='';
-    document.getElementById('feedback').textContent='Your score was added to the ranking.';
+    document.getElementById('feedback').textContent=saveResult.ok?'Your score was saved to the global ranking.':(saveResult.local?'Your score was saved only on this device.':('Score could not be synced: '+(saveResult.error||'unknown error')));
     document.getElementById('next').textContent='Try again';
     document.getElementById('next').onclick=()=>start(active);
-    renderRanking();
+    await loadRanking();
   }
 };
 
 document.getElementById('back').onclick=()=>{document.getElementById('quiz').classList.remove('active');goQuizzes()};
 
-function renderRanking(){
-  const box=document.getElementById("rankingRows");
-  let s=JSON.parse(localStorage.getItem("avilaScores")||"[]").sort((a,b)=>b.score-a.score);
-  box.innerHTML='';
-  if(!s.length){box.innerHTML='<div class="rank-row"><div>—</div><div>Nenhum jogador ainda</div><div>—</div></div>';return}
-  s.slice(0,20).forEach((p,i)=>{
-    const r=document.createElement("div");r.className="rank-row";
-    r.innerHTML=`<div class="rank-number">${i+1}</div><div>${p.name}</div><div>${p.score}/${p.total}</div>`;
-    box.appendChild(r);
-  });
+if(supabaseReady){
+  supabaseClient.channel('scores-live')
+    .on('postgres_changes',{event:'*',schema:'public',table:'scores'},()=>loadRanking())
+    .subscribe((status,error)=>{
+      if(status==='SUBSCRIBED'){document.getElementById('rankingStatus').textContent='Ranking global conectado · atualiza em tempo real';}
+      else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'){console.error('Realtime:',status,error);document.getElementById('rankingStatus').textContent='Ranking pode carregar, mas o Realtime falhou. Confira a publicação supabase_realtime.';}
+    });
 }
-renderRanking();
+loadRanking();
 </script>
 </body>
 </html>
